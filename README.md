@@ -31,7 +31,7 @@ The server 'Base url' will be the single URL that the extension will communicate
 An example GET request for this command follows: `http://127.0.0.1:8080/arduinoserver?msg=output&out=testing&device=203`
 
 2. The 'allinputs' command - All inputs for any arduinos in any tinkercad.com tab should be able to be retrieved using this command. The only query string parameter is `msg` and it must contain the value `allinputs`.<br/>
-The GET request for this command will always take the form: `http://127.0.0.1:8080/arduinoserver?msg=allinputs`
+The GET request for this command will always take the form: `http://127.0.0.1:8080/arduinoserver?msg=allinputs`<br/>
 The response must contain a JSON object, which contains any number of input values for a specified device/tab, in the following format:<br/>
 ```javascript
 {
