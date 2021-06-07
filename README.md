@@ -12,7 +12,7 @@ Download the source and load the extension in chrome. To load the extension in c
 That's it, it should be loaded.
 
 # Configuration
-It's best to interact with the extension from a chrome tab that has a tinkercad.com circuit loaded. The url should follow the following format: https://tinkercad.com/things/*YOUR CIRCUIT UNIQUE ID*<br/>
+It's best to interact with the extension from a chrome tab that has a tinkercad.com circuit loaded. The url should follow the following format: https://tinkercad.com/things/*YOUR_CIRCUIT_UNIQUE_ID*<br/>
 Then follow these steps:<br/>
 1. Find the 'Tinkercad Net Connector' extension in chrome (typically in top right of the window there's a puzzle piece icon that represents extensions - click it).<br/>
 2. Click on the 'T' icon which belongs to the 'Tinkercad Net Connector' extension.<br/>
@@ -28,8 +28,10 @@ The following query string parameters<br/>
   b. `out` which will contain the text output to the serial output. The extension will listen for output and will send output after it detects a '\n' character. The current implementation requires that you do not clear the 'serial output' in tinkercad.com.<br/>
   c. `device` is used to emulate different devices, which makes use of the associated chrome tab's ID to represent a device ID.<br/>
 and any response text that the server replies back with will be sent to the arduino.
+An example GET request for this command follows: `http://127.0.0.1:8080/arduinoserver?msg=output&out=testing&device=203`
 
 2. The 'allinputs' command - All inputs for any arduinos in any tinkercad.com tab should be able to be retrieved using this command. The only query string parameter is `msg` and it must contain the value `allinputs`.<br/>
+The GET request for this command will always take the form: `http://127.0.0.1:8080/arduinoserver?msg=allinputs`
 The response must contain a JSON object, which contains any number of input values for a specified device/tab, in the following format:<br/>
 ```javascript
 {
