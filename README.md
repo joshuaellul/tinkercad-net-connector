@@ -22,12 +22,12 @@ Then follow these steps:<br/>
 
 # Server Code Web API
 The server 'Base url' will be the single URL that the extension will communicate with. It makes use of query string parameters to both send arduino output to and to check for arduino input from. The two commands that can be used follow:<br/>
-1. The 'output' command - Arduino output will be sent to the 'Base url' with:
-The following query string parameters<br/>
+1. The 'output' command - Arduino output will be sent to the 'Base url' with:<br/>
+* The following query string parameters<br/>
   a. `msg` which will contain the value `output`.<br/>
   b. `out` which will contain the text output to the serial output. The extension will listen for output and will send output after it detects a '\n' character. The current implementation requires that you do not clear the 'serial output' in tinkercad.com.<br/>
   c. `device` is used to emulate different devices, which makes use of the associated chrome tab's ID to represent a device ID.<br/>
-and any response text that the server replies back with will be sent to the arduino.
+* and any response text that the server replies back with will be sent to the arduino.<br/>
 An example GET request for this command follows: `http://127.0.0.1:8080/arduinoserver?msg=output&out=testing&device=203`
 
 2. The 'allinputs' command - All inputs for any arduinos in any tinkercad.com tab should be able to be retrieved using this command. The only query string parameter is `msg` and it must contain the value `allinputs`.<br/>
