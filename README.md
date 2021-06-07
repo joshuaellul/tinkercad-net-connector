@@ -5,6 +5,9 @@ A Tinkercad.com Google Chrome Extension that connects Arduino Serial Input/Outpu
 This is heavily untested and may contain bugs - have a look through the source to understand what the code is doing.<br/>
 The extension should only be enabled when you are using it, and otherwise it should be turned off - since the current implementation will continue to execute a web request to the server you specify after the refresh rate period elapses (you also have to specify the refresh rate).<br/>
 
+# Pre-installation
+Open the manifest.json file and update the last permission from `"http://localhost:8080/*"` to the url to the server you will be connecting to.
+
 # Installation
 Download the source and load the extension in chrome. To load the extension in chrome do the following:
 1. In chrome browse to the url `chrome://extensions/`
