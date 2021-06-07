@@ -12,7 +12,7 @@ Download the source and load the extension in chrome. To load the extension in c
 That's it, it should be loaded.
 
 # Configuration
-It's best to interact with the extension from a chrome tab that has a tinkercad.com circuit loaded. The url should follow the following format: https://tinkercad.com/things/*YOUR_CIRCUIT_UNIQUE_ID*<br/>
+It's best to interact with the extension from a chrome tab that has a tinkercad.com circuit loaded. The url should follow the following format: https://tinkercad.com/things/YOUR_CIRCUIT_UNIQUE_ID<br/>
 Then follow these steps:<br/>
 1. Find the 'Tinkercad Net Connector' extension in chrome (typically in top right of the window there's a puzzle piece icon that represents extensions - click it).<br/>
 2. Click on the 'T' icon which belongs to the 'Tinkercad Net Connector' extension.<br/>
