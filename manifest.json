@@ -1,0 +1,33 @@
+{  
+    "manifest_version": 2,  
+    "name": "Tinkercad Net Connector",  
+    "description": "Tinkercad Net Connector",  
+    "version": "1.0",  
+    "content_scripts": [
+      {
+          "matches":[
+              "*://*.tinkercad.com/things/*"
+          ],
+          "js": ["content.js"]
+      }  
+    ],    
+    "background": {
+            "matches":[
+                "*://*.tinkercad.com/things/*"
+            ],
+            "scripts": ["background.js"]
+    },  
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_title": "Configure"
+    },  
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tabs",
+        "*://*.tinkercad.com/things/*"
+    ],
+    "optional_permissions": [
+        "https://*/*"
+    ]
+}
