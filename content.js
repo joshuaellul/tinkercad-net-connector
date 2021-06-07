@@ -7,24 +7,26 @@ const diff = (diffMe, diffBy) => diffMe.split(diffBy).join('');
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 async function getTabId() {
-    return tabid = await new Promise(resolve =>
+    let tabid = await new Promise(resolve =>
         chrome.runtime.sendMessage({msg: "get-tabid" }, (response) => {
             //console.log("active tab:");
             //console.log(response);
             resolve(response);
         })
     );
+    return tabid;
 }
 
 var documentObserver = new MutationObserver(async function(mutations, observer) {        
+    let tabid = await getTabId();
 
     //check if an event handler has already been set up for the particular tab
-    if (monitoringTabs[getTabId()] == true) {
+    if (monitoringTabs[tabid] == true) {
         return;
     }
 
     monitoringTabs.push({
-        key: getTabId(),
+        key: tabid,
         value: true
     });
 
@@ -46,7 +48,7 @@ var documentObserver = new MutationObserver(async function(mutations, observer) 
                     const line = latestDiff.substring(0, latestDiff.indexOf('\n') + 1);
                     lastText += line;
                     chrome.runtime.sendMessage({msg: "send-output", output: line}, response => {
-                        //console.log(response);
+                        sendInputToDevice(response);
                     });              
                 }            
             });                                                
@@ -54,20 +56,24 @@ var documentObserver = new MutationObserver(async function(mutations, observer) 
     }
 });
 
+async function sendInputToDevice(input) {
+    elements = document.querySelectorAll("[class*=code_panel__serial__input]");
+    if (elements != null && elements.length > 0) {
+        theInputField = elements[0];
+        theInputField.value = input;
+        elements = document.querySelectorAll("[class*=js-code_panel__serial__send]");
+        if (elements != null && elements.length > 0) {
+            theSendButton = elements[0];
+            theSendButton.click();
+        }
+    }
+}
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {      
-      if (request.msg == "process-input") {
-          elements = document.querySelectorAll("[class*=code_panel__serial__input]");
-          if (elements != null && elements.length > 0) {
-            theInputField = elements[0];
-            theInputField.value = request.input;
-            elements = document.querySelectorAll("[class*=js-code_panel__serial__send]");
-            if (elements != null && elements.length > 0) {
-                theSendButton = elements[0];
-                theSendButton.click();
-            }
-          }
-      }        
+        if (request.msg == "process-input") {
+            sendInputToDevice(request.input);
+        }        
     }
 );
 

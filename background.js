@@ -12,35 +12,50 @@ async function setTimer(seconds) {
 }
 
 async function handleSetTimerRefreshRate(request, sender, sendResponse) {
-    setTimer(request.seconds);            
-    return true;
+    setTimer(request.seconds);
+}
+
+async function getUrlBase() {
+    let urlbase = await new Promise(resolve =>
+        chrome.storage.local.get(['urlbase'], (result) => {  
+            resolve(result.urlbase);
+        })
+    );
+    return urlbase;
+}
+
+async function fetchAndGetResponse(url) {
+    let response = await new Promise(resolve =>
+        fetch(url).then(r => r.text()).then(r => {
+            resolve(r);
+        })
+    );            
+    return response;
 }
 
 async function handleSendOutput(request, sender, sendResponse) {
-    chrome.storage.local.get(['urlbase'], function(result) {                
-        var url = result.urlbase;
-        if (url == null || url.length == 0) return;                
-            url += "?msg=output";
-            url += "&out=" + encodeURIComponent(request.output);
-            url += "&device=" + encodeURIComponent(sender.tab.id);
-            fetch(url).then(r => r.text()).then(r => {
-                sendResponse(r);
-            });
-            return true;
-    });  
+    let url = await getUrlBase();
+    if (url == null || url.length == 0) return;                
+    url += "?msg=output";
+    url += "&out=" + encodeURIComponent(request.output);
+    url += "&device=" + encodeURIComponent(sender.tab.id);
+    response = await fetchAndGetResponse(url);
+    sendResponse(response);
 }
 
 chrome.runtime.onMessage.addListener(
-    async function(request, sender, sendResponse) {
+    function(request, sender, sendResponse) {
         if (request.msg == "send-output") {
-            return handleSendOutput(request, sender, sendResponse);
+            handleSendOutput(request, sender, sendResponse);
+            return true;
         } else if (request.msg == "get-tabid") {
-            sendResponse(sender.tab.id);
+            sendResponse(sender.tab.id);            
             return true;
         } else if (request.msg == "set-refreshrate") {
-            return handleSetTimerRefreshRate(request, sender, sendResponse);
+            handleSetTimerRefreshRate(request, sender, sendResponse);
+            return true;
         }             
-    }
+    }    
 );
 
 function refreshRateTimerExecute() {
@@ -48,17 +63,14 @@ function refreshRateTimerExecute() {
     chrome.storage.local.get(['urlbase'], function(result) {                
         url = result.urlbase;
         if (url == null || url.length == 0) return;                
-            url += "?msg=allinputs";            
-            fetch(url).then(r => r.text()).then(response => {            
-                //send response to the correct tab
-                const obj = JSON.parse(response);
-                obj.inputs.forEach(input => {
-                    chrome.tabs.sendMessage(input.device, {msg: "process-input", input: input.value}, function(response) {
-                        //ignore response
-                    });
-                });
+        url += "?msg=allinputs";            
+        fetch(url).then(r => r.text()).then(response => {            
+            //send response to the correct tab
+            const obj = JSON.parse(response);
+            obj.inputs.forEach(input => {                
+                chrome.tabs.sendMessage(input.device, {msg: "process-input", input: input.value});
             });
-            return true;
+        });
     }); 
 };
 

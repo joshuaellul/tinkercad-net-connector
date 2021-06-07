@@ -25,7 +25,8 @@
         "activeTab",
         "storage",
         "tabs",
-        "*://*.tinkercad.com/things/*"
+        "*://*.tinkercad.com/things/*",
+        "https://localhost:8080/*"
     ],
     "optional_permissions": [
         "https://*/*"
