@@ -15,7 +15,7 @@ app.get('/arduinoserver', (req, res) => {
         devices.forEach(element => {
             inputsArray.push({
                 "device": element,
-                "value": (Math.floor(Math.random() * 999) + 1).toString()
+                "value": (Math.floor(Math.random() * 999) + 1).toString() + "+"
             });
         });
         var ret = {

@@ -60,7 +60,7 @@ async function sendInputToDevice(input) {
     elements = document.querySelectorAll("[class*=code_panel__serial__input]");
     if (elements != null && elements.length > 0) {
         theInputField = elements[0];
-        theInputField.value = input + String.fromCharCode(255);
+        theInputField.value = input;
         elements = document.querySelectorAll("[class*=js-code_panel__serial__send]");
         if (elements != null && elements.length > 0) {
             theSendButton = elements[0];

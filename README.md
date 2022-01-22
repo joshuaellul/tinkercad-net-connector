@@ -21,7 +21,7 @@ Then follow these steps:<br/>
 2. Click on the 'T' icon which belongs to the 'Tinkercad Net Connector' extension.<br/>
 3. In the popup window you will be required to enter two fields:<br/>
   a. The 'Base url' to where serial output from tinkercad.com will be sent to. This same 'Base url' will be used to check for any incoming data as well. If you are testing with a local server then this base url might be something like: http://127.0.0.1:8080/arduinoserver<br/>
-  b. The 'Input Refresh Rate' in seconds, which is used by the chrome extension to periodically check the server (specified in a. above) to see if there is any pending input that should be sent to the tinkercad.com arduino.<br/>
+  b. The 'Input Refresh Rate' in milliseconds, which is used by the chrome extension to periodically check the server (specified in a. above) to see if there is any pending input that should be sent to the tinkercad.com arduino.<br/>
 
 # Server Code Web API
 The server 'Base url' will be the single URL that the extension will communicate with. It makes use of query string parameters to both send arduino output to and to check for arduino input from. The two commands that can be used follow:<br/>

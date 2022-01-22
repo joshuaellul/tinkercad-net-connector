@@ -18,5 +18,5 @@ function setBaseURL() {
     });
     chrome.storage.local.set({refreshrate: inputRefreshRate.value}, function() {        
     });
-    chrome.runtime.sendMessage({msg: "set-refreshrate", seconds: inputRefreshRate.value});                    
+    chrome.runtime.sendMessage({msg: "set-refreshrate", ms: inputRefreshRate.value});                    
 }

@@ -1,8 +1,6 @@
 var refreshRateTimer = null;
 
-async function setTimer(seconds) {
-
-    refreshRateInMS = seconds * 1000;
+async function setTimer(refreshRateInMS) {
 
     if (refreshRateTimer != null) {
         clearInterval(refreshRateTimer);        
@@ -12,7 +10,7 @@ async function setTimer(seconds) {
 }
 
 async function handleSetTimerRefreshRate(request, sender, sendResponse) {
-    setTimer(request.seconds);
+    setTimer(request.ms);
 }
 
 async function getUrlBase() {
