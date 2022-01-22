@@ -68,6 +68,7 @@ function refreshRateTimerExecute() {
             //send response to the correct tab
             const obj = JSON.parse(response);
             obj.inputs.forEach(input => {                
+                console.log(input);
                 chrome.tabs.sendMessage(input.device, {msg: "process-input", input: input.value});
             });
         });
