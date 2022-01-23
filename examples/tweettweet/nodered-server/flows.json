@@ -1,0 +1,244 @@
+[
+    {
+        "id": "d272e21e71e7b207",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bdccbad2a8e69f56",
+        "type": "http response",
+        "z": "d272e21e71e7b207",
+        "name": "Return valid request response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "a17c3b951c9d0963",
+        "type": "change",
+        "z": "d272e21e71e7b207",
+        "name": "Get device ID",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "req.query.device",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 80,
+        "wires": [
+            [
+                "16e17c8091624195"
+            ]
+        ]
+    },
+    {
+        "id": "16e17c8091624195",
+        "type": "file",
+        "z": "d272e21e71e7b207",
+        "name": "",
+        "filename": "Save device ID",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 500,
+        "y": 140,
+        "wires": [
+            [
+                "bdccbad2a8e69f56"
+            ]
+        ]
+    },
+    {
+        "id": "58a40b273471d3c1",
+        "type": "http response",
+        "z": "d272e21e71e7b207",
+        "name": "Return response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 740,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "09a341aa382fe1f3",
+        "type": "file in",
+        "z": "d272e21e71e7b207",
+        "name": "Retrieve device ID",
+        "filename": "deviceid",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 370,
+        "y": 320,
+        "wires": [
+            [
+                "01199c898b66df40"
+            ]
+        ]
+    },
+    {
+        "id": "01199c898b66df40",
+        "type": "function",
+        "z": "d272e21e71e7b207",
+        "name": "Store device ID in temp variable",
+        "func": "msg.deviceid = parseInt(msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 260,
+        "wires": [
+            [
+                "3467d12f3fcc29a0"
+            ]
+        ]
+    },
+    {
+        "id": "fdbd5d5d66e7bb2e",
+        "type": "function",
+        "z": "d272e21e71e7b207",
+        "name": "Build response",
+        "func": "var ret = String.fromCharCode(2) \n    + msg.payload.meta.total_tweet_count \n    + String.fromCharCode(3);\nmsg.payload = {\n    \"inputs\": [\n        {\n            \"device\": msg.deviceid,\n            \"value\": ret\n        }\n    ]\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 380,
+        "wires": [
+            [
+                "58a40b273471d3c1"
+            ]
+        ]
+    },
+    {
+        "id": "3467d12f3fcc29a0",
+        "type": "http request",
+        "z": "d272e21e71e7b207",
+        "name": "Get number of bitcoiin tweets",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.twitter.com/2/tweets/counts/recent?query=bitcoin&start_time=2022-01-22T00:00:00Z&granularity=day",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "bearer",
+        "senderr": false,
+        "credentials": {},
+        "x": 690,
+        "y": 320,
+        "wires": [
+            [
+                "d124c654e69133ce"
+            ]
+        ]
+    },
+    {
+        "id": "d124c654e69133ce",
+        "type": "json",
+        "z": "d272e21e71e7b207",
+        "name": "Convert to JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 370,
+        "y": 380,
+        "wires": [
+            [
+                "fdbd5d5d66e7bb2e"
+            ]
+        ]
+    },
+    {
+        "id": "6495384c4b59a919",
+        "type": "http in",
+        "z": "d272e21e71e7b207",
+        "name": "",
+        "url": "/bitcointweets",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 200,
+        "wires": [
+            [
+                "5b435a05016da9ef",
+                "8850f37660465f44"
+            ]
+        ],
+        "outputLabels": [
+            "msg.payload"
+        ]
+    },
+    {
+        "id": "5b435a05016da9ef",
+        "type": "switch",
+        "z": "d272e21e71e7b207",
+        "name": "Check if output msg",
+        "property": "req.query.msg",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "output",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 240,
+        "y": 140,
+        "wires": [
+            [
+                "a17c3b951c9d0963"
+            ]
+        ]
+    },
+    {
+        "id": "8850f37660465f44",
+        "type": "switch",
+        "z": "d272e21e71e7b207",
+        "name": "Check if allinputs msg",
+        "property": "req.query.msg",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "allinputs",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 240,
+        "y": 260,
+        "wires": [
+            [
+                "09a341aa382fe1f3"
+            ]
+        ]
+    }
+]

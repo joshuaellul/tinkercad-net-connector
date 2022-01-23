@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener(
     }    
 );
 
-function refreshRateTimerExecute() {
+function refreshRateTimerExecute() {    
     var url = "";
     chrome.storage.local.get(['urlbase'], function(result) {                
         url = result.urlbase;
