@@ -49,8 +49,8 @@
         "id": "16e17c8091624195",
         "type": "file",
         "z": "d272e21e71e7b207",
-        "name": "",
-        "filename": "Save device ID",
+        "name": "Save device ID",
+        "filename": "deviceid",
         "appendNewline": false,
         "createDir": false,
         "overwriteFile": "true",
@@ -145,7 +145,6 @@
         "proxy": "",
         "authType": "bearer",
         "senderr": false,
-        "credentials": {},
         "x": 690,
         "y": 320,
         "wires": [
