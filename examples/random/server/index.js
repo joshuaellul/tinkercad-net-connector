@@ -21,6 +21,7 @@ app.get('/arduinoserver', (req, res) => {
         var ret = {
             "inputs": inputsArray
         };
+        res.set('Access-Control-Allow-Origin', '*');
         res.send(JSON.stringify(ret));
     }        
 });
