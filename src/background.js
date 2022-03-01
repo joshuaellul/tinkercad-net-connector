@@ -1,10 +1,15 @@
 var refreshRateTimer = null;
+var doRawToAll = true;
 
 async function setTimer(refreshRateInMS) {
 
     if (refreshRateTimer != null) {
         clearInterval(refreshRateTimer);        
     }
+
+    chrome.storage.local.get(['rawtoall'], function(result) {                
+        doRawToAll = result.rawtoall;
+    });  
     
     refreshRateTimer = setInterval(refreshRateTimerExecute, refreshRateInMS);
 }
@@ -62,13 +67,21 @@ function refreshRateTimerExecute() {
         url = result.urlbase;
         if (url == null || url.length == 0) return;                
         url += "?msg=allinputs";            
-        fetch(url).then(r => r.text()).then(response => {            
-            //send response to the correct tab
-            const obj = JSON.parse(response);
-            obj.inputs.forEach(input => {                
-                console.log(input);
-                chrome.tabs.sendMessage(input.device, {msg: "process-input", input: input.value});
-            });
+        fetch(url).then(r => r.text()).then(response => {
+            if (!doRawToAll) {
+                //send response to the correct tab
+                const obj = JSON.parse(response);
+                obj.inputs.forEach(input => {                
+                    //console.log(input);
+                    chrome.tabs.sendMessage(input.device, {msg: "process-input", input: input.value});
+                });
+            } else {
+                chrome.tabs.query({}, function(tabs) {
+                    for (var i=0; i<tabs.length; ++i) {
+                        chrome.tabs.sendMessage(tabs[i].id, {msg: "process-input", input: response});
+                    }
+                });
+            }      
         });
     }); 
 };
