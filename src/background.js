@@ -28,12 +28,17 @@ async function getUrlBase() {
 }
 
 async function fetchAndGetResponse(url) {
-    let response = await new Promise(resolve =>
-        fetch(url).then(r => r.text()).then(r => {
-            resolve(r);
-        })
-    );            
-    return response;
+    try {
+        let response = await new Promise(resolve =>
+            fetch(url).then(r => r.text()).then(r => {
+                resolve(r);
+            })
+        );   
+        return response;
+    } catch (err) {
+        console.log(err);
+    }        
+    return null;
 }
 
 async function handleSendOutput(request, sender, sendResponse) {
@@ -42,7 +47,7 @@ async function handleSendOutput(request, sender, sendResponse) {
     url += "?msg=output";
     url += "&out=" + encodeURIComponent(request.output);
     url += "&device=" + encodeURIComponent(sender.tab.id);
-    response = await fetchAndGetResponse(url);
+    let response = await fetchAndGetResponse(url);
     sendResponse(response);
 }
 
@@ -71,9 +76,13 @@ function refreshRateTimerExecute() {
             if (!doRawToAll) {
                 //send response to the correct tab
                 const obj = JSON.parse(response);
-                obj.inputs.forEach(input => {                
-                    //console.log(input);
-                    chrome.tabs.sendMessage(input.device, {msg: "process-input", input: input.value});
+                obj.inputs.forEach(input => {  
+                    var deviceId = parseInt(input.device);
+                    try {
+                        chrome.tabs.sendMessage(deviceId, {msg: "process-input", input: input.value});
+                    } catch (err) { 
+                        console.log(err);
+                    }
                 });
             } else {
                 chrome.tabs.query({}, function(tabs) {

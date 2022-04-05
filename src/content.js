@@ -48,7 +48,9 @@ var documentObserver = new MutationObserver(async function(mutations, observer) 
                     const line = latestDiff.substring(0, latestDiff.indexOf('\n') + 1);
                     lastText += line;
                     chrome.runtime.sendMessage({msg: "send-output", output: line}, response => {
-                        sendInputToDevice(response);
+                        if (response != null) {
+                            sendInputToDevice(response);
+                        }
                     });              
                 }            
             });                                                
