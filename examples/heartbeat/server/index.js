@@ -9,22 +9,12 @@ app.get('/arduinoserver', (req, res) => {
         var deviceid = parseInt(req.query.device);        
         if (!devices.includes(deviceid)) {
             devices.push(deviceid);
-        }
+        }   
         res.set('Access-Control-Allow-Origin', '*');
         res.send(200);
     } else if (req.query.msg === 'allinputs') {
-        var inputsArray = [];
-        devices.forEach(element => {
-            inputsArray.push({
-                "device": element,
-                "value": (Math.floor(Math.random() * 999) + 1).toString() + "+"
-            });
-        });
-        var ret = {
-            "inputs": inputsArray
-        };
         res.set('Access-Control-Allow-Origin', '*');
-        res.send(JSON.stringify(ret));
+        res.send("+");
     }        
 });
 
