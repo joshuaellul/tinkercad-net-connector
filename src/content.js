@@ -2,15 +2,11 @@ var monitoringTabs = [];
 var theDiv = null;
 var lastText = "";
 
-const diff = (diffMe, diffBy) => diffMe.split(diffBy).join('');
-
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 async function getTabId() {
     let tabid = await new Promise(resolve =>
         chrome.runtime.sendMessage({msg: "get-tabid" }, (response) => {
-            //console.log("active tab:");
-            //console.log(response);
             resolve(response);
         })
     );
@@ -33,7 +29,6 @@ var documentObserver = new MutationObserver(async function(mutations, observer) 
     elements = document.querySelectorAll("[class*=code_panel__serial__text]");
     if (elements != null && elements.length > 0) {        
         theDiv = elements[0];
-        isMonitoring = true;
         theDiv.addEventListener('DOMSubtreeModified', function(ev) {            
             var urlbase = "";
             chrome.storage.local.get(['urlbase'], function(result) {                
@@ -43,10 +38,12 @@ var documentObserver = new MutationObserver(async function(mutations, observer) 
                     return;
                 }
 
-                const latestDiff = diff(theDiv.innerHTML, lastText);
-                if (latestDiff.includes('\n')) {
-                    const line = latestDiff.substring(0, latestDiff.indexOf('\n') + 1);
-                    lastText += line;
+                var latestPos = lastText.length;
+                var latestDiff = theDiv.innerHTML.substring(latestPos + lastText.length);
+                
+                if (latestDiff.includes('\n')) {                    
+                    const line = latestDiff.substring(0, latestDiff.indexOf('\n') + 1);                    
+                    lastText = theDiv.innerHTML.substring(0, latestPos + line.length);
                     chrome.runtime.sendMessage({msg: "send-output", output: line}, response => {
                         if (response != null) {
                             sendInputToDevice(response);

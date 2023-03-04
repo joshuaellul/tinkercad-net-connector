@@ -1,5 +1,23 @@
 var refreshRateTimer = null;
 var doRawToAll = true;
+var running = false;
+
+const readLocalStorage = async (key) => {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get([key], function (result) {
+        if (result[key] === undefined) {
+          resolve('');
+        } else {
+          resolve(result[key]);
+        }
+      });
+    });
+  };
+
+async function checkAndGetRunning() {
+    running = await readLocalStorage('running');
+    return running;
+}
 
 async function setTimer(refreshRateInMS) {
 
@@ -11,11 +29,19 @@ async function setTimer(refreshRateInMS) {
         doRawToAll = result.rawtoall;
     });  
     
-    refreshRateTimer = setInterval(refreshRateTimerExecute, refreshRateInMS);
+    await checkAndGetRunning();
+
+    if (running) {
+        refreshRateTimer = setInterval(refreshRateTimerExecute, refreshRateInMS);
+        chrome.browserAction.setIcon({path: 'on.png'});
+    }    
 }
 
 async function handleSetTimerRefreshRate(request, sender, sendResponse) {
-    setTimer(request.ms);
+    await checkAndGetRunning();
+    if (running) {
+        setTimer(request.ms);
+    }
 }
 
 async function getUrlBase() {
@@ -42,6 +68,12 @@ async function fetchAndGetResponse(url) {
 }
 
 async function handleSendOutput(request, sender, sendResponse) {
+    
+    await checkAndGetRunning();
+    if (!running) {
+        return;
+    }
+    
     let url = await getUrlBase();
     if (url == null || url.length == 0) return;                
     url += "?msg=output";
@@ -53,7 +85,7 @@ async function handleSendOutput(request, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if (request.msg == "send-output") {
+        if (request.msg == "send-output") {            
             handleSendOutput(request, sender, sendResponse);
             return true;
         } else if (request.msg == "get-tabid") {
@@ -66,8 +98,17 @@ chrome.runtime.onMessage.addListener(
     }    
 );
 
-function refreshRateTimerExecute() {    
-    var url = "";
+async function refreshRateTimerExecute() {    
+    await checkAndGetRunning();
+    if (!running) {
+        if (refreshRateTimer != null) {
+            clearInterval(refreshRateTimer);        
+        }
+        chrome.browserAction.setIcon({path: 'off.png'});
+        return;
+    }
+
+    var url = "";    
     chrome.storage.local.get(['urlbase'], function(result) {                
         url = result.urlbase;
         if (url == null || url.length == 0) return;                
