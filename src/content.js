@@ -1,4 +1,4 @@
-var monitoringTabs = []; 
+var monitoringTabs = {}; 
 var theDiv = null;
 var lastText = "";
 
@@ -21,10 +21,7 @@ var documentObserver = new MutationObserver(async function(mutations, observer) 
         return;
     }
 
-    monitoringTabs.push({
-        key: tabid,
-        value: true
-    });
+    monitoringTabs[tabid] = true;
 
     elements = document.querySelectorAll("[class*=code_panel__serial__text]");
     if (elements != null && elements.length > 0) {        
